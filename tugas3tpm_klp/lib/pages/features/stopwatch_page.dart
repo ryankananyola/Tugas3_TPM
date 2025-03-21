@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class StopwatchPage extends StatefulWidget {
   const StopwatchPage({super.key});
@@ -14,92 +13,36 @@ class _StopwatchPageState extends State<StopwatchPage> {
   Timer? _timer;
   final List<Map<String, String>> _laps = [];
   int _previousLapTime = 0;
-  int _storedElapsedTime = 0;
-  bool _wasRunning = false;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadStopwatchState();
-  }
-
-  Future<void> _loadStopwatchState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    _storedElapsedTime = prefs.getInt('elapsedTime') ?? 0;
-    _wasRunning = prefs.getBool('isRunning') ?? false;
-    
-    if (_wasRunning) {
-      int lastStartTime = prefs.getInt('lastStartTime') ?? 0;
-      int currentTime = DateTime.now().millisecondsSinceEpoch;
-      int elapsedSinceLastStart = currentTime - lastStartTime;
-
-      _stopwatch.start();
-      _stopwatch.elapsedMilliseconds;
-      _stopwatch.stop();
-
-      _storedElapsedTime += elapsedSinceLastStart;
-      _stopwatch.reset();
-      _stopwatch.start();
-      _stopwatch.elapsedMilliseconds;
-      _stopwatch.stop();
-
-      _startStopwatch(resume: true);
-    } else {
-      _stopwatch.reset();
-      _stopwatch.start();
-      _stopwatch.elapsedMilliseconds;
-      _stopwatch.stop();
-    }
-    setState(() {});
-  }
-
-  Future<void> _saveStopwatchState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setInt('elapsedTime', _stopwatch.elapsedMilliseconds + _storedElapsedTime);
-    await prefs.setBool('isRunning', _stopwatch.isRunning);
-    if (_stopwatch.isRunning) {
-      await prefs.setInt('lastStartTime', DateTime.now().millisecondsSinceEpoch);
-    }
-  }
-
-  void _startStopwatch({bool resume = false}) {
+  void _startStopwatch() {
     if (!_stopwatch.isRunning) {
       _stopwatch.start();
       _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
         setState(() {});
       });
-
-      if (!resume) {
-        _storedElapsedTime = 0;
-        _saveStopwatchState();
-      }
     }
   }
 
   void _pauseStopwatch() {
     if (_stopwatch.isRunning) {
       _stopwatch.stop();
-      _saveStopwatchState();
+      _timer?.cancel();
       setState(() {});
     }
   }
 
-  void _resetStopwatch() async {
+  void _resetStopwatch() {
     _stopwatch.reset();
     _stopwatch.stop();
     _laps.clear();
     _previousLapTime = 0;
-    _storedElapsedTime = 0;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.remove('elapsedTime');
-    await prefs.remove('isRunning');
-    await prefs.remove('lastStartTime');
+    _timer?.cancel();
     setState(() {});
   }
 
   void _addLap() {
     if (_stopwatch.isRunning) {
-      int currentTime = _stopwatch.elapsedMilliseconds + _storedElapsedTime;
+      int currentTime = _stopwatch.elapsedMilliseconds;
       int lapDifference = currentTime - _previousLapTime;
 
       _laps.insert(0, {
@@ -117,32 +60,43 @@ class _StopwatchPageState extends State<StopwatchPage> {
     int seconds = (milliseconds ~/ 1000) % 60;
     int milli = (milliseconds % 1000) ~/ 10;
     return '${minutes.toString().padLeft(2, '0')}:'
-        '${seconds.toString().padLeft(2, '0')}.'
+        '${seconds.toString().padLeft(2, '0')}.' 
         '${milli.toString().padLeft(2, '0')}';
   }
 
   @override
   void dispose() {
     _timer?.cancel();
-    _saveStopwatchState();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    int displayedTime = _stopwatch.elapsedMilliseconds + _storedElapsedTime;
+    int displayedTime = _stopwatch.elapsedMilliseconds;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Stopwatch')),
+      appBar: AppBar(
+        title: const Text('Stopwatch'),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 0.5,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Waktu Stopwatch
             Text(
               _formatTime(displayedTime),
-              style: const TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+              style: const TextStyle(
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.5,
+              ),
             ),
             const SizedBox(height: 20),
+
+            // Tombol Stopwatch
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -153,15 +107,21 @@ class _StopwatchPageState extends State<StopwatchPage> {
               ],
             ),
             const SizedBox(height: 20),
+
+            // Daftar Lap
             Expanded(
               child: ListView.builder(
                 itemCount: _laps.length,
                 itemBuilder: (context, index) {
                   return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
+                    color: Colors.grey[100],
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    margin: const EdgeInsets.symmetric(vertical: 6),
                     child: ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.blueAccent,
                         child: Text(
                           '${_laps.length - index}',
                           style: const TextStyle(color: Colors.white),
@@ -194,7 +154,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),

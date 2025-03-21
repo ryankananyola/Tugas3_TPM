@@ -4,10 +4,12 @@ import 'features/stopwatch_page.dart';
 import 'features/number_type_page.dart';
 import 'features/tracking_lbs_page.dart';
 import 'features/time_converter_page.dart';
-import 'features/favorite_sites_page.dart';
 import 'member_page.dart';
+import 'help_page.dart';
 
 class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -33,108 +35,75 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _logout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-    Navigator.pushReplacementNamed(context, '/');
-  }
+  final List<Widget> _pages = [
+    HomeContent(),
+    MemberPage(),
+    HelpPage(),
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
-
-    switch (index) {
-      case 0:
-        // Tetap di halaman utama
-        break;
-      case 1:
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => MemberPage()),
-        );
-        break;
-      case 2:
-        // Tampilkan dialog bantuan
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text("Bantuan"),
-            content: Text("Ini adalah aplikasi multi-fungsi dengan berbagai fitur yang bisa Anda gunakan."),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text("Tutup"),
-              )
-            ],
-          ),
-        );
-        break;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Home Page'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: _logout,
-          )
-        ],
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text(
-              _greetingMessage,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                ListTile(
-                  leading: Icon(Icons.timer),
-                  title: Text("Stopwatch"),
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => StopwatchPage())),
-                ),
-                ListTile(
-                  leading: Icon(Icons.numbers),
-                  title: Text("Jenis Bilangan"),
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NumberTypePage())),
-                ),
-                ListTile(
-                  leading: Icon(Icons.location_on),
-                  title: Text("Tracking LBS"),
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingLBSPage())),
-                ),
-                ListTile(
-                  leading: Icon(Icons.access_time),
-                  title: Text("Konversi Waktu"),
-                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TimeConverterPage())),
-                ),
-                ListTile(
-                  leading: Icon(Icons.favorite),
-                  title: Text("Situs Rekomendasi"),
-                  // onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => FavoriteSitesPage())),
-                ),
-              ],
-            ),
-          ),
-        ],
+      backgroundColor: Colors.white,
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: _pages,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: [
+        items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Beranda'),
           BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Daftar Anggota'),
           BottomNavigationBarItem(icon: Icon(Icons.help), label: 'Bantuan'),
         ],
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
+      ),
+    );
+  }
+}
+
+class HomeContent extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Selamat datang di Aplikasi!",
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: ListView(
+              children: [
+                _buildMenuItem(context, Icons.timer, "Stopwatch", StopwatchPage()),
+                _buildMenuItem(context, Icons.numbers, "Jenis Bilangan", NumberTypePage()),
+                _buildMenuItem(context, Icons.location_on, "Tracking LBS", TrackingLBSPage()),
+                _buildMenuItem(context, Icons.access_time, "Konversi Waktu", TimeConverterPage()),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMenuItem(BuildContext context, IconData icon, String title, Widget page) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      child: ListTile(
+        leading: Icon(icon, color: Colors.black87),
+        title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => page)),
       ),
     );
   }
