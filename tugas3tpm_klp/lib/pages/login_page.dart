@@ -10,7 +10,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoggedIn = false;
+  final TextEditingController _nicknameController = TextEditingController();
+  bool _obscureText = true; // Untuk menyembunyikan/tampilkan password
 
   @override
   void initState() {
@@ -30,9 +31,16 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _login() async {
-    if (_usernameController.text == 'admin' && _passwordController.text == '1234') {
+    String username = _usernameController.text.trim();
+    String password = _passwordController.text.trim();
+    String nickname = _nicknameController.text.trim();
+
+    if (username == 'admin' && password == '1234') {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       await prefs.setBool('isLoggedIn', true);
+      await prefs.setString('username', username);
+      await prefs.setString('nickname', nickname);
+
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => HomePage()),
@@ -54,13 +62,27 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextField(
+              controller: _nicknameController,
+              decoration: InputDecoration(labelText: 'Nama Panggilan (Opsional)'),
+            ),
+            TextField(
               controller: _usernameController,
               decoration: InputDecoration(labelText: 'Username'),
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
+              obscureText: _obscureText,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                suffixIcon: IconButton(
+                  icon: Icon(_obscureText ? Icons.visibility : Icons.visibility_off),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText; // Toggle tampilan password
+                    });
+                  },
+                ),
+              ),
             ),
             SizedBox(height: 20),
             ElevatedButton(
