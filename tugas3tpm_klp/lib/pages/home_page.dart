@@ -5,6 +5,7 @@ import 'features/number_type_page.dart';
 import 'features/tracking_lbs_page.dart';
 import 'features/time_converter_page.dart';
 import 'features/favorite_sites_page.dart';
+import 'member_page.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -48,7 +49,10 @@ class _HomePageState extends State<HomePage> {
         // Tetap di halaman utama
         break;
       case 1:
-        // Navigasi ke daftar anggota (jika ada)
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => MemberPage()),
+        );
         break;
       case 2:
         // Tampilkan dialog bantuan
@@ -106,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                 ListTile(
                   leading: Icon(Icons.location_on),
                   title: Text("Tracking LBS"),
-                  // onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingLBSPage())),
+                  onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => TrackingLBSPage())),
                 ),
                 ListTile(
                   leading: Icon(Icons.access_time),

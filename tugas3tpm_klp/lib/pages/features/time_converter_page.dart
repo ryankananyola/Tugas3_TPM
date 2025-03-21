@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 
+void main() {
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.blueAccent),
+      home: TimeConverterPage(),
+    ),
+  );
+}
+
 class TimeConverterPage extends StatefulWidget {
   @override
   _TimeConverterPageState createState() => _TimeConverterPageState();
@@ -8,16 +18,44 @@ class TimeConverterPage extends StatefulWidget {
 class _TimeConverterPageState extends State<TimeConverterPage> {
   final TextEditingController _yearController = TextEditingController();
   int? hours, minutes, seconds;
+  String? _errorMessage;
 
   void _convertTime() {
-    int? years = int.tryParse(_yearController.text);
-    if (years != null && years >= 0) {
+    setState(() {
+      _errorMessage = null;
+      hours = null;
+      minutes = null;
+      seconds = null;
+    });
+
+    String input = _yearController.text.trim();
+    if (input.isEmpty) {
       setState(() {
-        hours = years * 365 * 24;
-        minutes = hours! * 60;
-        seconds = minutes! * 60;
+        _errorMessage = "Masukkan angka terlebih dahulu!";
       });
+      return;
     }
+
+    int? years = int.tryParse(input);
+    if (years == null) {
+      setState(() {
+        _errorMessage = "Input tidak valid! Masukkan angka bulat positif.";
+      });
+      return;
+    }
+
+    if (years < 0) {
+      setState(() {
+        _errorMessage = "Tahun tidak boleh negatif!";
+      });
+      return;
+    }
+
+    setState(() {
+      hours = years * 365 * 24;
+      minutes = hours! * 60;
+      seconds = minutes! * 60;
+    });
   }
 
   String formatNumber(int number) {
@@ -30,7 +68,15 @@ class _TimeConverterPageState extends State<TimeConverterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Konversi Waktu')),
+      appBar: AppBar(
+        title: Text('Konversi Waktu'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -48,6 +94,7 @@ class _TimeConverterPageState extends State<TimeConverterPage> {
                 border: OutlineInputBorder(),
                 labelText: 'Tahun',
                 prefixIcon: Icon(Icons.timer),
+                errorText: _errorMessage,
               ),
             ),
             SizedBox(height: 20),
