@@ -81,7 +81,9 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _nicknameController,
                 decoration: InputDecoration(
                   labelText: 'Nama Panggilan (Opsional)',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12)
+                  ),
                 ),
               ),
               SizedBox(height: 16),
@@ -89,7 +91,9 @@ class _LoginPageState extends State<LoginPage> {
                 controller: _usernameController,
                 decoration: InputDecoration(
                   labelText: 'Username',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12)
+                  ),
                 ),
               ),
               SizedBox(height: 16),
@@ -98,7 +102,9 @@ class _LoginPageState extends State<LoginPage> {
                 obscureText: _obscureText,
                 decoration: InputDecoration(
                   labelText: 'Password',
-                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12)
+                  ),
                   suffixIcon: IconButton(
                     icon: Icon(
                       _obscureText ? Icons.visibility : Icons.visibility_off,
@@ -126,7 +132,10 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: Text(
                     'Login',
-                    style: TextStyle(fontSize: 18, color: Colors.white),
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white
+                    ),
                   ),
                 ),
               ),
