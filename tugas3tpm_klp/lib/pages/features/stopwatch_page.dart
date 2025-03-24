@@ -8,25 +8,57 @@ class StopwatchPage extends StatefulWidget {
   _StopwatchPageState createState() => _StopwatchPageState();
 }
 
-class _StopwatchPageState extends State<StopwatchPage> {
-  final Stopwatch _stopwatch = Stopwatch();
+class _StopwatchPageState extends State<StopwatchPage> with WidgetsBindingObserver {
+  Stopwatch _stopwatch = Stopwatch();
   Timer? _timer;
+  DateTime? _startTime; // Menyimpan waktu terakhir saat mulai
   final List<Map<String, String>> _laps = [];
   int _previousLapTime = 0;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _resumeStopwatch();
+    } else if (state == AppLifecycleState.paused) {
+      _saveElapsedTime();
+    }
+  }
+
   void _startStopwatch() {
     if (!_stopwatch.isRunning) {
+      _startTime = DateTime.now();
       _stopwatch.start();
-      _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-        setState(() {});
-      });
+      _startTimer();
     }
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   void _pauseStopwatch() {
     if (_stopwatch.isRunning) {
       _stopwatch.stop();
       _timer?.cancel();
+      _startTime = null;
       setState(() {});
     }
   }
@@ -36,6 +68,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
     _stopwatch.stop();
     _laps.clear();
     _previousLapTime = 0;
+    _startTime = null;
     _timer?.cancel();
     setState(() {});
   }
@@ -55,19 +88,28 @@ class _StopwatchPageState extends State<StopwatchPage> {
     }
   }
 
+  void _saveElapsedTime() {
+    if (_stopwatch.isRunning) {
+      _startTime = DateTime.now();
+    }
+  }
+
+  void _resumeStopwatch() {
+    if (_stopwatch.isRunning && _startTime != null) {
+      final elapsed = DateTime.now().difference(_startTime!).inMilliseconds;
+      _stopwatch.start();
+      _stopwatch.elapsedMilliseconds + elapsed;
+      _startTimer();
+    }
+  }
+
   String _formatTime(int milliseconds) {
     int minutes = (milliseconds ~/ 60000) % 60;
     int seconds = (milliseconds ~/ 1000) % 60;
     int milli = (milliseconds % 1000) ~/ 10;
-    return '${minutes.toString().padLeft(2, '0')}:'
-        '${seconds.toString().padLeft(2, '0')}.' 
-        '${milli.toString().padLeft(2, '0')}';
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+    return '${minutes.toString().padLeft(2, '0')}:' 
+           '${seconds.toString().padLeft(2, '0')}.' 
+           '${milli.toString().padLeft(2, '0')}';
   }
 
   @override
@@ -76,7 +118,10 @@ class _StopwatchPageState extends State<StopwatchPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Stopwatch'),
+        title: const Text(
+          'Stopwatch',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         backgroundColor: Colors.white,
         foregroundColor: Colors.black,
         elevation: 0.5,
