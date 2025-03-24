@@ -78,7 +78,10 @@ class HomeContent extends StatelessWidget {
         children: [
           Text(
             greetingMessage,
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            style: const TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold
+            ),
           ),
           const SizedBox(height: 16),
           Expanded(
@@ -98,11 +101,19 @@ class HomeContent extends StatelessWidget {
 
   Widget _buildMenuItem(BuildContext context, IconData icon, String title, Widget page) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12)
+      ),
       elevation: 2,
       child: ListTile(
         leading: Icon(icon, color: Colors.black87),
-        title: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500)),
+        title: Text(
+          title,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w500
+          )
+        ),
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => page)),
       ),
     );
