@@ -15,7 +15,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _greetingMessage = "";
+  String _greetingMessage = "Selamat datang di Aplikasi!";
   int _selectedIndex = 0;
 
   @override
@@ -35,25 +35,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  final List<Widget> _pages = [
-    HomeContent(),
-    MemberPage(),
-    HelpPage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: IndexedStack(
         index: _selectedIndex,
-        children: _pages,
+        children: [
+          HomeContent(greetingMessage: _greetingMessage),
+          MemberPage(),
+          HelpPage(),
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const [
@@ -62,13 +54,21 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(icon: Icon(Icons.help), label: 'Bantuan'),
         ],
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
+        },
       ),
     );
   }
 }
 
 class HomeContent extends StatelessWidget {
+  final String greetingMessage;
+
+  const HomeContent({super.key, required this.greetingMessage});
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -77,7 +77,7 @@ class HomeContent extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Selamat datang di Aplikasi!",
+            greetingMessage,
             style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),

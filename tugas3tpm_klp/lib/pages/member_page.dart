@@ -6,7 +6,14 @@ class MemberPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Daftar Anggota')),
+      appBar: AppBar(
+        title: const Text(
+          'Daftar Anggota',
+          style: TextStyle(
+            fontWeight: FontWeight.bold
+          ),
+        )
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -48,7 +55,9 @@ class MemberPage extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.only(bottom: 16.0),
       elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12)
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Row(
@@ -71,11 +80,22 @@ class MemberPage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text('NIM: $nim', style: const TextStyle(fontSize: 14)),
-                  Text('Jabatan: $position', style: const TextStyle(fontSize: 14)),
+                  Text(
+                    'NIM: $nim',
+                    style: const TextStyle(
+                      fontSize: 14
+                    )
+                  ),
+                  Text('Jabatan: $position',
+                    style: const TextStyle(
+                      fontSize: 14
+                    )
+                  ),
                   Text(
                     'Kekayaan: $wealth',
-                    style: const TextStyle(fontSize: 14, color: Colors.green),
+                    style: const TextStyle(
+                      fontSize: 14, color: Colors.green
+                    ),
                   ),
                 ],
               ),
