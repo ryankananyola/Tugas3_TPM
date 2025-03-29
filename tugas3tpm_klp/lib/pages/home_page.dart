@@ -4,6 +4,7 @@ import 'features/stopwatch_page.dart';
 import 'features/number_type_page.dart';
 import 'features/tracking_lbs_page.dart';
 import 'features/time_converter_page.dart';
+import 'features/favorite_sites_page.dart';
 import 'member_page.dart';
 import 'help_page.dart';
 
@@ -91,6 +92,7 @@ class HomeContent extends StatelessWidget {
                 _buildMenuItem(context, Icons.numbers, "Jenis Bilangan", NumberTypePage()),
                 _buildMenuItem(context, Icons.location_on, "Tracking LBS", TrackingLBSPage()),
                 _buildMenuItem(context, Icons.access_time, "Konversi Waktu", TimeConverterPage()),
+                _buildMenuItem(context, Icons.favorite, "Situs Favorit", FavoriteSitesPage()),
               ],
             ),
           ),
