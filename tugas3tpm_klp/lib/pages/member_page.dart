@@ -6,38 +6,45 @@ class MemberPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Daftar Anggota',
-          style: TextStyle(
-            fontWeight: FontWeight.bold
-          ),
-        )
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SafeArea(
         child: Column(
           children: [
-            _buildMemberCard(
-              name: 'Sayudha Patria',
-              nim: '123220177',
-              position: 'Direktur PT Timah',
-              wealth: '300 Triliun',
-              imagePath: 'assets/image/yudha.jpg',
+            Container(
+              padding: EdgeInsets.all(16),
+              color: Colors.black,
+              width: double.infinity,
+              child: Text(
+                "DAFTAR ANGGOTA",
+                style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                textAlign: TextAlign.center,
+              ),
             ),
-            _buildMemberCard(
-              name: 'Aryamukti Satria Hendrayana',
-              nim: '123220181',
-              position: 'Direktur PT Pertamina',
-              wealth: '900 Triliun',
-              imagePath: 'assets/image/rio.jpg',
-            ),
-            _buildMemberCard(
-              name: 'Yohanes Febryan Kana Nyola',
-              nim: '123220198',
-              position: 'Direktur PT Duta Palma Group',
-              wealth: '78 Triliun',
-              imagePath: 'assets/image/ryan.jpg',
+            Expanded(
+              child: ListView(
+                children: [
+                  _buildMemberCard(
+                    name: 'Sayudha Patria',
+                    nim: '123220177',
+                    position: 'Direktur PT Timah',
+                    wealth: '300 Triliun',
+                    imagePath: 'assets/image/yudha.jpg',
+                  ),
+                  _buildMemberCard(
+                    name: 'Aryamukti Satria Hendrayana',
+                    nim: '123220181',
+                    position: 'Direktur PT Pertamina',
+                    wealth: '900 Triliun',
+                    imagePath: 'assets/image/rio.jpg',
+                  ),
+                  _buildMemberCard(
+                    name: 'Yohanes Febryan Kana Nyola',
+                    nim: '123220198',
+                    position: 'Direktur PT Duta Palma Group',
+                    wealth: '78 Triliun',
+                    imagePath: 'assets/image/ryan.jpg',
+                  ),
+                ],
+              ),
             ),
           ],
         ),
